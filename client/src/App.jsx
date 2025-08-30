@@ -374,6 +374,13 @@ const VideoCallApp = () => {
     }
   }, [remoteStream]);
 
+  // Update local video when stream changes
+  useEffect(() => {
+    if (myStream && localVideoRef.current) {
+      localVideoRef.current.srcObject = myStream;
+    }
+  }, [myStream]);
+
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       {/* Header */}
@@ -504,6 +511,16 @@ const VideoCallApp = () => {
                 className="w-full h-full object-cover"
               />
               
+              {/* Remote video placeholder */}
+              {!remoteStream && (
+                <div className="absolute inset-0 bg-gray-800 flex items-center justify-center">
+                  <div className="text-center">
+                    <Users className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+                    <p className="text-gray-400">Waiting for other user's video...</p>
+                  </div>
+                </div>
+              )}
+              
               {/* Local Video (Picture-in-Picture) */}
               <div className="absolute top-4 right-4 w-48 h-36 bg-gray-700 rounded-lg overflow-hidden border-2 border-gray-600">
                 <video
@@ -513,7 +530,12 @@ const VideoCallApp = () => {
                   muted
                   className="w-full h-full object-cover"
                 />
-                {!isVideoEnabled && (
+                {!myStream && (
+                  <div className="absolute inset-0 bg-gray-800 flex items-center justify-center">
+                    <Video className="w-8 h-8 text-gray-400" />
+                  </div>
+                )}
+                {!isVideoEnabled && myStream && (
                   <div className="absolute inset-0 bg-gray-800 flex items-center justify-center">
                     <VideoOff className="w-8 h-8 text-gray-400" />
                   </div>
